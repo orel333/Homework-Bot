@@ -41,8 +41,9 @@ handler.setFormatter(formatter)
 
 
 def get_bot():
-    """Создаёт бота для обращения
-       к нему из любой части кода."""
+    """Создаёт бота.
+    Для обращения к нему из любой части кода.
+    """
     return telegram.Bot(token=TELEGRAM_TOKEN)
 
 
@@ -129,8 +130,9 @@ def check_response(response):
 
 
 def parse_status(homework):
-    """Определяет статус последней работы и готовит
-       сообщение с информацией о нём."""
+    """Определяет статус последней работы.
+    Готовит сообщение с информацией о нём.
+    """
     logger.info('Запущена функция "parse_status"')
     keys = ['homework_name', 'status']
     for key in keys:
@@ -157,8 +159,9 @@ def parse_status(homework):
 
 
 def check_tokens():
-    """Проверка полноты набора необходимых данных для
-       авторизации и доступа к чату."""
+    """Проверка полноты набора необходимых данных.
+    Для авторизации и доступа к чату.
+    """
     TOKENS_DICT = {
         'PRACTICUM_TOKEN': PRACTICUM_TOKEN,
         'TELEGRAM_TOKEN': TELEGRAM_TOKEN,
