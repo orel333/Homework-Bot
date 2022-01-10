@@ -150,3 +150,9 @@ static/
 posts/static/
 media/
 
+# моя папка
+outhouse/
+
+# измененные тесты
+tests/
+

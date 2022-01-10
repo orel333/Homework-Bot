@@ -121,6 +121,7 @@ class TestHomework:
         func_name = 'check_tokens'
         utils.check_function(homework, func_name, 0)
         tokens = homework.check_tokens()
+        #print(homework.TOKENS_LIST)
         assert not tokens, (
             'Проверьте, что при отсутствии необходимых переменных окружения, '
             f'функция {func_name} возвращает False'
@@ -455,6 +456,7 @@ class TestHomework:
         func_name = 'parse_status'
         response = homework.get_api_answer(current_timestamp)
         homeworks = homework.check_response(response)
+        
         try:
             for hw in homeworks:
                 homework.parse_status(hw)
