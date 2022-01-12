@@ -44,7 +44,14 @@ def get_bot():
     """Создаёт бота.
     Для обращения к нему из любой части кода.
     """
-    return telegram.Bot(token=TELEGRAM_TOKEN)
+    try:
+        bot = telegram.Bot(token=TELEGRAM_TOKEN)
+        logger.debug('Бот успешно инициализирован')
+        return bot
+    except Exception as error:
+        logger.error(
+            f'Бота не удалось запустить по причине {error}'
+        )
 
 
 def send_message(bot, message):
@@ -66,22 +73,52 @@ def send_message(bot, message):
 
 def get_api_answer(current_timestamp):
     """Получение ответа API в формате python."""
-    timestamp = current_timestamp or int(time.time())
+    bad_format = False
+    cts_type = type(current_timestamp)
+    if (cts_type is not int) and (cts_type is not float):
+        logger.warning(
+            ('Тип current_timestamp не соответствует '
+             f'ожидаемому: {cts_type}')
+        )
+        bad_format = True
+    if len(str(int(current_timestamp))) != 10:
+        logger.warning(
+            ('В переменную current_timestamp передано '
+             f'некорректное число: {current_timestamp}')
+        )
+        bad_format = True
+    if bad_format is True:
+        timestamp = int(time.time())
+    else:
+        timestamp = current_timestamp
     # timestamp = 0
     params = {'from_date': timestamp}
     logger.debug(params)
     try:
         response = requests.get(ENDPOINT, headers=HEADERS, params=params)
+        resp_json = response.json()
         if response.status_code == 200:
-            return response.json()
-        else:
-            message = (
-                f'Недоступен URL "{ENDPOINT}". '
-                f'Статус ответа API: {response.status_code}'
-            )
-            logger.error(message)
-            send_message(get_bot(), message)
-            raise ConnectionError('Ответ от эндпойнта отличается от 200')
+            return resp_json
+        SERVER_FAULT_KEYS = ['error', 'code']
+        premessage = ''
+        fault_keys = False
+        for key in SERVER_FAULT_KEYS:
+            if key in resp_json:
+                fault_keys = True
+                error_descr = resp_json.get(key)
+                premessage = ('Признак отказа сервера.'
+                              f'Ошибка: "{error_descr}"\n')
+                # на случай, если и code, и error будет в ответе
+                premessage += premessage
+        if not fault_keys:
+            premessage = f'Недоступен URL "{ENDPOINT}". '
+        message = (
+            premessage,
+            f'Статус ответа API: {response.status_code}'
+            f'Запрос: {response.request.__dict__}')
+        logger.error(message)
+        send_message(get_bot(), message)
+        raise ConnectionError('Ответ от эндпойнта отличается от 200')
     except Exception as error:
         message = (
             f'Недоступен URL "{ENDPOINT}" '
@@ -104,7 +141,7 @@ def check_response(response):
         raise TypeError(
             'Некорректный тип ответа API'
         )
-    if keys[0] not in response.keys() or keys[1] not in response.keys():
+    if keys[0] not in response.keys() or keys[1] not in response:
         no_keys_list = []
         for item in keys:
             if item not in response.keys():
