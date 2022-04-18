@@ -10,7 +10,6 @@
 ```
 pip install -r requirements.txt
 ``` 
-- Создайте в папке проекта файл `.env`.
 - Если Вы не зарегистрированы в TELEGRAM, [зарегистрируйтесь](https://messengers.guru/telegram/kak-zaregistrirovatsya-telegrame)
 - Создайте в TELEGRAM бота и получите токен для доступа к его API-интерфейсу:
   - Наберите в TELEGRAM в поиске "BotFather".
@@ -29,7 +28,8 @@ pip install -r requirements.txt
   - Отправьте команду `/me`
   - Запишите номер после "Id:"
 - Получите токен Вашего аккаунта в Яндекс: [здесь](https://oauth.yandex.ru/authorize?response_type=token&client_id=1d0b9dd4d652455a9eb710d450ff456a).
-- Запишите в файл информацию вида[^1]:
+- - Создайте в папке проекта файл `.env`.
+- Запишите в файл `.env` информацию вида[^1]:
 ```
    PRACTICUM_TOKEN=токен Вашего аккаунта в Яндекс
    TELEGRAM_TOKEN=токен, полученный для Вашего TELEGRAM-бота
